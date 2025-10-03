@@ -28,7 +28,8 @@
         <!-- Type handler generating xls:fo style sheet -->
         <docHandler id="fo-fop" info="fo" type="org.fugerit.java.doc.mod.fop.FreeMarkerFopTypeHandlerUTF8" />
         <!-- Type handler generating pdf -->
-        <docHandler id="pdf-fop" info="pdf" type="org.fugerit.java.doc.mod.fop.PdfFopTypeHandler">
+        <docHandler id="pdf-fop-plain" info="pdf" type="org.fugerit.java.doc.mod.fop.PdfFopTypeHandler"/>
+        <docHandler id="pdf-fop-config" info="pdf" type="org.fugerit.java.doc.mod.fop.PdfFopTypeHandler">
             <docHandlerCustomConfig charset="UTF-8" fop-config-mode="classloader" fop-config-classloader-path="venus-sample-pdf-fop-accessibility/fop-config.xml" fop-suppress-events="1"/>
         </docHandler>
     </docHandlerConfig>
