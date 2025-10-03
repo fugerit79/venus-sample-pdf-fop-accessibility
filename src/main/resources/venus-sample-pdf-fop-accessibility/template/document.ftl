@@ -41,6 +41,7 @@
     </metadata>
     <body>
     <para>${docTitle!defaultTitle}</para>
+    <#if (checkImageBase64)??><image alt="Check with AXES 4" type="png" base64="${checkImageBase64}"/></#if>
     <table columns="3" colwidths="30;30;40"  width="100" id="data-table" padding="2">
         <row header="true">
             <cell align="center"><para>Name</para></cell>

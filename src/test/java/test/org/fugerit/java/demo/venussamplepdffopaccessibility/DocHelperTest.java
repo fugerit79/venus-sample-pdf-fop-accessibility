@@ -1,6 +1,7 @@
 // generated from template 'DocHelperTest.ftl' on 2025-10-03T10:02:02.619+02:00
 package test.org.fugerit.java.demo.venussamplepdffopaccessibility;
 
+import org.fugerit.java.core.io.FileIO;
 import org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelper;
 import org.fugerit.java.demo.venussamplepdffopaccessibility.People;
 
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import lombok.Getter;
@@ -56,6 +58,8 @@ class DocHelperTest {
     void testDocProcess() throws Exception {
         // creates the doc helper
         DocHelper docHelper = new DocHelper();
+        byte[] data = FileIO.readBytes( "src/main/docs/images/check-ok-no-transparency.jpg" );
+        String imageBase64 = Base64.getEncoder().encodeToString( data );
         // create custom data for the fremarker template 'document.ftl'
         List<People> listPeople = Arrays.asList( new People( "Luthien", "Tinuviel", "Queen" ), new People( "Thorin", "Oakshield", "King" ) );
         String chainId = "document";
@@ -65,7 +69,7 @@ class DocHelperTest {
             log.info( "delete {}:{}", outputFile.getCanonicalPath(), outputFile.delete() );
             try (FileOutputStream fos = new FileOutputStream(outputFile)) {
                 log.info( "generating chainId:{}, handlerId:{}, outputFile:{}",  chainId, handlerId, outputFile.getCanonicalPath() );
-                docHelper.getDocProcessConfig().fullProcess( chainId, DocProcessContext.newContext( "listPeople", listPeople ), handlerId, fos );
+                docHelper.getDocProcessConfig().fullProcess( chainId, DocProcessContext.newContext( "listPeople", listPeople ).withAtt( "checkImageBase64", imageBase64 ), handlerId, fos );
             }
             Assertions.assertTrue( outputFile.length() > 0 );
         }

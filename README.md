@@ -100,3 +100,36 @@ Here is the final size check comparison :
 [main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-pdf-a.pdf:73802
 [main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-pdf-ua.pdf:70860
 ```
+
+## Images in PDF File
+
+Now we try to add an image to our PDF : [check-ok-no-transparency.jpg](src/main/docs/images/check-ok-no-transparency.jpg) : 
+
+```
+    <#if (checkImageBase64)??><image alt="Check with AXES 4" type="png" base64="${checkImageBase64}"/></#if>
+```
+
+```java
+byte[] data = FileIO.readBytes( "src/main/docs/images/check-ok-no-transparency.jpg" );
+String imageBase64 = Base64.getEncoder().encodeToString( data );
+// code ...
+docHelper.getDocProcessConfig().fullProcess( chainId, DocProcessContext.newContext( "listPeople", listPeople )
+    .withAtt( "checkImageBase64", imageBase64 ), // we add the base 64 of the image
+    handlerId, fos );
+```
+
+Here is a new size comparison : 
+
+```
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_fo-fop.fo:51655
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-plain.pdf:42393
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-config.pdf:45317
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-pdf-a.pdf:109312
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-pdf-ua.pdf:106166
+```
+
+NOTE: for images and other elements you must follow your active profiles rules, for instance images with transparency are not supported in PDF/A-1b and would lead to an error like :
+
+```
+Caused by: org.apache.fop.pdf.TransparencyDisallowedException: PDF/A-1b does not allow the use of transparency
+```
