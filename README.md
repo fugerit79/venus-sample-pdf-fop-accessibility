@@ -2,6 +2,13 @@
 
 This is a sample project configured using [fj-doc-maven-plugin init plugin](https://venusdocs.fugerit.org/guide/#maven-plugin-goal-init).
 
+## Requirement
+
+* JDK 8+ (*)
+* Maven 3.8+
+
+(*) Currently FOP not working on [JDK 25, See bug JDK-8368356](https://bugs.openjdk.org/browse/JDK-8368356).
+
 ## Project initialization
 
 This project was created with [Venus Maven plugin](https://venusdocs.fugerit.org/guide/#maven-plugin-goal-init)
