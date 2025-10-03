@@ -49,6 +49,9 @@ class DocHelperTest {
 
     private static final String ID_PDF_FOP_PDF_UA = "pdf-fop-pdf-ua"; // FOP handler with PDF/UA-1 profile (fop-config-pdf-ua.xml)
 
+    private static final String ID_PDF_FOP_PDF_UA_NO_FONT_EMBEDDING = "pdf-fop-pdf-ua-no-font-embedding"; // FOP handler with PDF/UA-1 profile wit no embedded font (fop-config-pdf-ua-no-font-embedding.xml)
+
+
     private String toOutputFileName( DocHelper docHelper, String prefix, String handlerId ) {
         DocTypeHandler handler = docHelper.getDocProcessConfig().getFacade().findHandler( handlerId );
         return String.format( "target/%s_%s.%s", prefix, handlerId, handler.getType() );
@@ -63,7 +66,7 @@ class DocHelperTest {
         // create custom data for the fremarker template 'document.ftl'
         List<People> listPeople = Arrays.asList( new People( "Luthien", "Tinuviel", "Queen" ), new People( "Thorin", "Oakshield", "King" ) );
         String chainId = "document";
-        List<String> handlerList = Arrays.asList( ID_PDF_FOP_FO, ID_PDF_FOP_PLAIN, ID_PDF_FOP_CONFIG, ID_PDF_FOP_PDF_A, ID_PDF_FOP_PDF_UA );
+        List<String> handlerList = Arrays.asList( ID_PDF_FOP_FO, ID_PDF_FOP_PLAIN, ID_PDF_FOP_CONFIG, ID_PDF_FOP_PDF_A, ID_PDF_FOP_PDF_UA, ID_PDF_FOP_PDF_UA_NO_FONT_EMBEDDING );
         for ( String handlerId :  handlerList) {
             File outputFile = new File( this.toOutputFileName(docHelper, chainId, handlerId ) );
             log.info( "delete {}:{}", outputFile.getCanonicalPath(), outputFile.delete() );

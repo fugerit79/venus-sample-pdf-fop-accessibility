@@ -23,6 +23,9 @@ mvn org.fugerit.java:fj-doc-maven-plugin:8.16.7:init \
 
 ## PDF/A Type Handler
 
+NOTE: PDF/A as nothing directly to do wit accessibility, 
+we talk about it just for completeness and comparison.
+
 To configure a PDF/A handler we need to embed fonts (in our case [TitilliumWeb](https://fonts.google.com/specimen/Titillium+Web/about))
 and create the proper [fop-config-pdf-a.xml](src/main/resources/venus-sample-pdf-fop-accessibility/fop-config-pdf-a.xml) configuration.
 
@@ -132,4 +135,23 @@ NOTE: for images and other elements you must follow your active profiles rules, 
 
 ```
 Caused by: org.apache.fop.pdf.TransparencyDisallowedException: PDF/A-1b does not allow the use of transparency
+```
+
+## PDF/UA with no font embedding
+
+Technically font embedding is not mandatory for PDF/UA but is 
+highly [advised](https://docs.oracle.com/cd/F28172_01/AG/Content/Accessibility%20Guide/AccessiblePDFs.htm)
+to preserve document layout.
+
+We have created an additional type handler with no font embedded [fop-config-pdf-ua-no-font-embedding.xml](src/main/resources/venus-sample-pdf-fop-accessibility/fop-config-pdf-ua-no-font-embedding.xml).
+
+The resulting PDF's size is much smaller : 
+
+```
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_fo-fop.fo:51655
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-plain.pdf:42710
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-config.pdf:45633
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-pdf-a.pdf:109708
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-pdf-ua.pdf:106513
+[main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-pdf-ua-no-font-embedding.pdf:49463
 ```

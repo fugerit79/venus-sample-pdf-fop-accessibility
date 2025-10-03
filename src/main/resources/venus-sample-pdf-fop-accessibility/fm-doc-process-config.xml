@@ -40,6 +40,10 @@
             <docHandlerCustomConfig charset="UTF-8" fop-suppress-events="1" pdf-ua-mode="PDF/UA-1"
                                     fop-config-mode="classloader" fop-config-classloader-path="venus-sample-pdf-fop-accessibility/fop-config-pdf-ua.xml" />
         </docHandler>
+        <docHandler id="pdf-fop-pdf-ua-no-font-embedding" info="pdf" type="org.fugerit.java.doc.mod.fop.PdfFopTypeHandler">
+            <docHandlerCustomConfig charset="UTF-8" fop-suppress-events="1" pdf-ua-mode="PDF/UA-1"
+                                    fop-config-mode="classloader" fop-config-classloader-path="venus-sample-pdf-fop-accessibility/fop-config-pdf-ua-no-font-embedding.xml" />
+        </docHandler>
     </docHandlerConfig>
 
     <docChain id="shared">
