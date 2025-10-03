@@ -41,6 +41,8 @@ class DocHelperTest {
 
     private static final String ID_PDF_FOP_CONFIG = "pdf-fop-config"; // FOP handler with standard configuration file (fop-config.xml)
 
+    private static final String ID_PDF_FOP_PDF_A = "pdf-fop-pdf-a"; // FOP handler with PDF/A-1b profile (fop-config-pdf-a.xml)
+
     private String toOutputFileName( DocHelper docHelper, String prefix, String handlerId ) {
         DocTypeHandler handler = docHelper.getDocProcessConfig().getFacade().findHandler( handlerId );
         return String.format( "target/%s_%s.%s", prefix, handlerId, handler.getType() );
@@ -53,7 +55,7 @@ class DocHelperTest {
         // create custom data for the fremarker template 'document.ftl'
         List<People> listPeople = Arrays.asList( new People( "Luthien", "Tinuviel", "Queen" ), new People( "Thorin", "Oakshield", "King" ) );
         String chainId = "document";
-        List<String> handlerList = Arrays.asList( ID_PDF_FOP_PLAIN, ID_PDF_FOP_CONFIG );
+        List<String> handlerList = Arrays.asList( ID_PDF_FOP_PLAIN, ID_PDF_FOP_CONFIG, ID_PDF_FOP_PDF_A );
         for ( String handlerId :  handlerList) {
             File outputFile = new File( this.toOutputFileName(docHelper, chainId, handlerId ) );
             log.info( "delete {}:{}", outputFile.getCanonicalPath(), outputFile.delete() );

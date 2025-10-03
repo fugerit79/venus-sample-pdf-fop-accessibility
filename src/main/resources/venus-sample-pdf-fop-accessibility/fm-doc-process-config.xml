@@ -32,6 +32,10 @@
         <docHandler id="pdf-fop-config" info="pdf" type="org.fugerit.java.doc.mod.fop.PdfFopTypeHandler">
             <docHandlerCustomConfig charset="UTF-8" fop-config-mode="classloader" fop-config-classloader-path="venus-sample-pdf-fop-accessibility/fop-config.xml" fop-suppress-events="1"/>
         </docHandler>
+        <docHandler id="pdf-fop-pdf-a" info="pdf" type="org.fugerit.java.doc.mod.fop.PdfFopTypeHandler">
+            <docHandlerCustomConfig charset="UTF-8" fop-suppress-events="1" pdf-a-mode="PDF/A-1b"
+                 fop-config-mode="classloader" fop-config-classloader-path="venus-sample-pdf-fop-accessibility/fop-config-pdf-a.xml" />
+        </docHandler>
     </docHandlerConfig>
 
     <docChain id="shared">

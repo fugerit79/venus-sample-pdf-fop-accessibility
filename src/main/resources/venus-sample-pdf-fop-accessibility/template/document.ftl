@@ -30,6 +30,11 @@
         <info name="excel-table-id">data-table=print</info>
         <!-- property specific for csv -->
         <info name="csv-table-id">data-table</info>
+        <!-- for PDF/A all fonts must be embedded, this can be achieved by :
+           * Embed the needed fonts
+           * Set the default font to an embedded font and only use embedded fonts
+        -->
+        <info name="default-font-name">TitilliumWeb</info>
         <footer-ext>
             <para align="right">${r"${currentPage}"} / ${r"${pageCount}"}</para>
         </footer-ext>
