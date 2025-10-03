@@ -13,7 +13,7 @@
     https://venusdocs.fugerit.org/fj-doc-freemarker/src/main/docs/fdp_xsd_config_ref.html
     -->
 
-    <docHandlerConfig registerById="true">
+    <docHandlerConfig registerById="true" >
 
         <!-- Type handler for markdown format -->
         <docHandler id="md-ext" info="md" type="org.fugerit.java.doc.base.typehandler.markdown.SimpleMarkdownExtTypeHandler" />

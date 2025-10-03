@@ -5,12 +5,15 @@ import org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelper;
 import org.fugerit.java.demo.venussamplepdffopaccessibility.People;
 
 import org.fugerit.java.doc.base.config.DocConfig;
+import org.fugerit.java.doc.base.config.DocTypeHandler;
 import org.fugerit.java.doc.base.process.DocProcessContext;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -34,25 +37,36 @@ import lombok.AllArgsConstructor;
 @Slf4j
 class DocHelperTest {
 
+    private static final String ID_PDF_FOP_PLAIN = "pdf-fop-plain"; // FOP handler with no additional configuration
+
+    private static final String ID_PDF_FOP_CONFIG = "pdf-fop-config"; // FOP handler with standard configuration file (fop-config.xml)
+
+    private String toOutputFileName( DocHelper docHelper, String prefix, String handlerId ) {
+        DocTypeHandler handler = docHelper.getDocProcessConfig().getFacade().findHandler( handlerId );
+        return String.format( "target/%s_%s.%s", prefix, handlerId, handler.getType() );
+    }
+
     @Test
-    void testDocProcess() {
-        try ( ByteArrayOutputStream baos = new ByteArrayOutputStream() ) {
-            // creates the doc helper
-            DocHelper docHelper = new DocHelper();
-            // create custom data for the fremarker template 'document.ftl'
-            List<People> listPeople = Arrays.asList( new People( "Luthien", "Tinuviel", "Queen" ), new People( "Thorin", "Oakshield", "King" ) );
-            
-            
-            String chainId = "document";
-            // handler id
-            String handlerId = DocConfig.TYPE_MD;
-            // output generation
-            docHelper.getDocProcessConfig().fullProcess( chainId, DocProcessContext.newContext( "listPeople", listPeople ), handlerId, baos );
-            // print the output
-            log.info( "html output : \n{}", new String( baos.toByteArray(), StandardCharsets.UTF_8 ) );
-            Assertions.assertNotEquals( 0, baos.size() );
-        } catch (Exception e) {
-            log.error( String.format( "Error : %s", e.toString() ), e );
+    void testDocProcess() throws Exception {
+        // creates the doc helper
+        DocHelper docHelper = new DocHelper();
+        // create custom data for the fremarker template 'document.ftl'
+        List<People> listPeople = Arrays.asList( new People( "Luthien", "Tinuviel", "Queen" ), new People( "Thorin", "Oakshield", "King" ) );
+        String chainId = "document";
+        List<String> handlerList = Arrays.asList( ID_PDF_FOP_PLAIN, ID_PDF_FOP_CONFIG );
+        for ( String handlerId :  handlerList) {
+            File outputFile = new File( this.toOutputFileName(docHelper, chainId, handlerId ) );
+            log.info( "delete {}:{}", outputFile.getCanonicalPath(), outputFile.delete() );
+            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                log.info( "generating chainId:{}, handlerId:{}, outputFile:{}",  chainId, handlerId, outputFile.getCanonicalPath() );
+                docHelper.getDocProcessConfig().fullProcess( chainId, DocProcessContext.newContext( "listPeople", listPeople ), handlerId, fos );
+            }
+            Assertions.assertTrue( outputFile.length() > 0 );
+        }
+        log.info( "output size comparison" );
+        for ( String handlerId :  handlerList) {
+            File outputFile = new File( this.toOutputFileName(docHelper, chainId, handlerId ) );
+            log.info( "size {}:{}", outputFile.getName(), outputFile.length() );
         }
     }
 
