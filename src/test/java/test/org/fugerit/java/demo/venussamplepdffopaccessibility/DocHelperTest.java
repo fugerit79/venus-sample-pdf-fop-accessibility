@@ -39,6 +39,8 @@ import lombok.AllArgsConstructor;
 @Slf4j
 class DocHelperTest {
 
+    private static final String ID_XML = "xml"; // XML output for debug
+
     private static final String ID_PDF_FOP_FO = "fo-fop"; // XSL-FO rendering for debug
 
     private static final String ID_PDF_FOP_PLAIN = "pdf-fop-plain"; // FOP handler with no additional configuration
@@ -66,7 +68,7 @@ class DocHelperTest {
         // create custom data for the fremarker template 'document.ftl'
         List<People> listPeople = Arrays.asList( new People( "Luthien", "Tinuviel", "Queen" ), new People( "Thorin", "Oakshield", "King" ) );
         String chainId = "document";
-        List<String> handlerList = Arrays.asList( ID_PDF_FOP_FO, ID_PDF_FOP_PLAIN, ID_PDF_FOP_CONFIG, ID_PDF_FOP_PDF_A, ID_PDF_FOP_PDF_UA, ID_PDF_FOP_PDF_UA_NO_FONT_EMBEDDING );
+        List<String> handlerList = Arrays.asList( ID_XML, ID_PDF_FOP_FO, ID_PDF_FOP_PLAIN, ID_PDF_FOP_CONFIG, ID_PDF_FOP_PDF_A, ID_PDF_FOP_PDF_UA, ID_PDF_FOP_PDF_UA_NO_FONT_EMBEDDING );
         for ( String handlerId :  handlerList) {
             File outputFile = new File( this.toOutputFileName(docHelper, chainId, handlerId ) );
             log.info( "delete {}:{}", outputFile.getCanonicalPath(), outputFile.delete() );
