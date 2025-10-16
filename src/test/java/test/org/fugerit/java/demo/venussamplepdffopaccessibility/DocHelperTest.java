@@ -3,8 +3,10 @@ package test.org.fugerit.java.demo.venussamplepdffopaccessibility;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureTreeRoot;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.fugerit.java.core.io.FileIO;
+import org.fugerit.java.core.lang.helpers.ClassHelper;
 import org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelper;
 import org.fugerit.java.demo.venussamplepdffopaccessibility.People;
 
@@ -15,10 +17,7 @@ import org.fugerit.java.doc.base.process.DocProcessContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -140,9 +139,11 @@ class DocHelperTest {
 
     private static byte[] addTextWatermark( byte[] input, String watermarkText) throws IOException {
         try (PDDocument document = Loader.loadPDF( input );
-             ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+             InputStream fontStream = ClassHelper.loadFromDefaultClassLoader( "font/TitilliumWeb-Regular.ttf" )) {
 
-            PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+            // Load font from file system
+            PDType0Font font = PDType0Font.load(document,fontStream);
 
             // Ensure document has structure tree for tagging
             PDStructureTreeRoot structureTreeRoot = document.getDocumentCatalog()
