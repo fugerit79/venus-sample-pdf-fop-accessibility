@@ -8,7 +8,7 @@
   <properties>
     <maven.compiler.release>8</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <fj-doc-version>8.16.7</fj-doc-version>
+    <fj-doc-version>8.17.0</fj-doc-version>
     <jacoco-plugin-version>0.8.13</jacoco-plugin-version>
   </properties>
   <dependencyManagement>
