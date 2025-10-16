@@ -2,6 +2,7 @@
 package test.org.fugerit.java.demo.venussamplepdffopaccessibility;
 
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureTreeRoot;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.fugerit.java.core.io.FileIO;
 import org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelper;
@@ -143,14 +144,28 @@ class DocHelperTest {
 
             PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
 
+            // Ensure document has structure tree for tagging
+            PDStructureTreeRoot structureTreeRoot = document.getDocumentCatalog()
+                    .getStructureTreeRoot();
+
+            if (structureTreeRoot == null) {
+                structureTreeRoot = new PDStructureTreeRoot();
+                document.getDocumentCatalog().setStructureTreeRoot(structureTreeRoot);
+            }
+
             // Iterate through all pages
             for (PDPage page : document.getPages()) {
+
                 PDPageContentStream contentStream = new PDPageContentStream(
                         document, page, PDPageContentStream.AppendMode.APPEND, true, true);
 
+                // Begin marked content for accessibility
+                contentStream.beginMarkedContent(
+                        org.apache.pdfbox.cos.COSName.ARTIFACT);
+
                 // Set transparency
                 PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
-                graphicsState.setNonStrokingAlphaConstant(0.3f); // 30% opacity
+                graphicsState.setNonStrokingAlphaConstant(0.3f);
                 contentStream.setGraphicsStateParameters(graphicsState);
 
                 // Set font and color
@@ -169,6 +184,9 @@ class DocHelperTest {
                                 pageHeight / 5));
                 contentStream.showText(watermarkText);
                 contentStream.endText();
+
+                // Begin marked content for accessibility
+                contentStream.endMarkedContent();
 
                 contentStream.close();
             }
