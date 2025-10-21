@@ -1,5 +1,8 @@
 # venus-sample-pdf-fop-accessibility
 
+> [![GitHub stars](https://img.shields.io/github/stars/fugerit79/venus-sample-pdf-fop-accessibility?style=social)](https://github.com/fugerit79/venus-sample-pdf-fop-accessibility/stargazers)  
+> ❤️ If this project helps you, please consider dropping a star — it really motivates continued development!
+
 This is a sample project configured using [fj-doc-maven-plugin init plugin](https://venusdocs.fugerit.org/guide/#maven-plugin-goal-init).
 
 [![Keep a Changelog v1.1.0 badge](https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735)](CHANGELOG.md)
@@ -164,3 +167,15 @@ The resulting PDF's size is much smaller :
 [main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-pdf-ua.pdf:106513
 [main] INFO test.org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelperTest - size document_pdf-fop-pdf-ua-no-font-embedding.pdf:49463
 ```
+
+## ❤️ Support
+
+This project is maintained in [my free time](https://github.com/fugerit79).  
+If you find it useful, please consider supporting it by:
+
+- ⭐ Giving the repository a star
+- 🐛 Opening an issue if you find a problem
+- 🔧 Creating a pull request if you'd like to improve something
+- 📢 Sharing it with others who might be interested
+
+Thank you for helping the project grow!
