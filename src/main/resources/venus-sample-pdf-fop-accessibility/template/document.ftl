@@ -35,6 +35,11 @@
            * Set the default font to an embedded font and only use embedded fonts
         -->
         <info name="default-font-name">TitilliumWeb</info>
+        <#if (watermarkMode!'') == 'template'>
+            <header-ext>
+                <image url="jpg" scaling="300" align="center" alt="Watermark" base64="${imageBase64CLFun('img/watermark.jpg')}" />
+            </header-ext>
+        </#if>
         <footer-ext>
             <para align="right">${r"${currentPage}"} / ${r"${pageCount}"}</para>
         </footer-ext>
