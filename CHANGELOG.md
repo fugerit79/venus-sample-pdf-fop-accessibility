@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) guide aligned with upstream fj-doc standards
 - PDF/UA-1 comparison with fj-doc-mod-openpdf-ext and fj-doc-mod-pdfbox
+- [AGENTS.md](AGENTS.md) instructions for AI coding agents
 
 ### Changed
 
