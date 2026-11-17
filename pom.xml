@@ -36,6 +36,14 @@
       <artifactId>fj-doc-mod-fop</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.fugerit.java</groupId>
+      <artifactId>fj-doc-mod-openpdf-ext</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.fugerit.java</groupId>
+      <artifactId>fj-doc-mod-pdfbox</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
@@ -50,12 +58,6 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.apache.pdfbox</groupId>
-          <artifactId>pdfbox</artifactId>
-          <version>3.0.3</version>
-          <scope>test</scope>
-      </dependency>
   </dependencies>
   <build>
     <plugins>

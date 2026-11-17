@@ -2,10 +2,19 @@
 package test.org.fugerit.java.demo.venussamplepdffopaccessibility;
 
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.cos.COSBase;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+import org.apache.pdfbox.pdmodel.common.PDMetadata;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureElement;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureTreeRoot;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.pdfbox.util.Matrix;
 import org.fugerit.java.core.io.FileIO;
+import org.fugerit.java.core.io.StreamIO;
 import org.fugerit.java.core.lang.helpers.ClassHelper;
 import org.fugerit.java.demo.venussamplepdffopaccessibility.DocHelper;
 import org.fugerit.java.demo.venussamplepdffopaccessibility.People;
@@ -18,6 +27,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -26,9 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
-import org.apache.pdfbox.util.Matrix;
 
 /**
  * This is a basic example of Fugerit Venus Doc usage,
@@ -60,6 +68,14 @@ class DocHelperTest {
 
     private static final String ID_PDF_FOP_PDF_UA_NO_FONT_EMBEDDING = "pdf-fop-pdf-ua-no-font-embedding"; // FOP handler with PDF/UA-1 profile wit no embedded font (fop-config-pdf-ua-no-font-embedding.xml)
 
+    private static final String ID_PDF_OPENPDF_PLAIN = "pdf-openpdf-plain"; // OpenPDF handler without PDF/UA-1 mode
+
+    private static final String ID_PDF_OPENPDF_PDF_UA = "pdf-openpdf-pdf-ua"; // OpenPDF handler with activatePdfUA1="true"
+
+    private static final String ID_PDF_PDFBOX_PLAIN = "pdf-pdfbox-plain"; // PDFBox handler without PDF/UA-1 mode
+
+    private static final String ID_PDF_PDFBOX_PDF_UA = "pdf-pdfbox-pdf-ua"; // PDFBox handler with pdfuaEnabled="true"
+
 
     private String toOutputFileName( DocHelper docHelper, String prefix, String handlerId ) {
         DocTypeHandler handler = docHelper.getDocProcessConfig().getFacade().findHandler( handlerId );
@@ -75,10 +91,15 @@ class DocHelperTest {
         // create custom data for the fremarker template 'document.ftl'
         List<People> listPeople = Arrays.asList( new People( "Luthien", "Tinuviel", "Queen" ), new People( "Thorin", "Oakshield", "King" ) );
         String chainId = "document";
-        List<String> handlerList = Arrays.asList( ID_XML, ID_PDF_FOP_FO, ID_PDF_FOP_PLAIN, ID_PDF_FOP_CONFIG, ID_PDF_FOP_PDF_A, ID_PDF_FOP_PDF_UA, ID_PDF_FOP_PDF_UA_NO_FONT_EMBEDDING );
+        List<String> handlerList = Arrays.asList(
+                ID_XML, ID_PDF_FOP_FO,
+                ID_PDF_FOP_PLAIN, ID_PDF_FOP_CONFIG, ID_PDF_FOP_PDF_A, ID_PDF_FOP_PDF_UA, ID_PDF_FOP_PDF_UA_NO_FONT_EMBEDDING,
+                ID_PDF_OPENPDF_PLAIN, ID_PDF_OPENPDF_PDF_UA,
+                ID_PDF_PDFBOX_PLAIN, ID_PDF_PDFBOX_PDF_UA
+        );
         for ( String handlerId :  handlerList) {
             File outputFile = new File( this.toOutputFileName(docHelper, chainId, handlerId ) );
-            log.info( "delete {}:{}", outputFile.getCanonicalPath(), outputFile.delete() );
+            log.info( "delete {}:{}" , outputFile.getCanonicalPath(), outputFile.delete() );
             try (FileOutputStream fos = new FileOutputStream(outputFile)) {
                 log.info( "generating chainId:{}, handlerId:{}, outputFile:{}",  chainId, handlerId, outputFile.getCanonicalPath() );
                 docHelper.getDocProcessConfig().fullProcess( chainId, DocProcessContext.newContext( "listPeople", listPeople ).withAtt( "checkImageBase64", imageBase64 ), handlerId, fos );
@@ -88,7 +109,72 @@ class DocHelperTest {
         log.info( "output size comparison" );
         for ( String handlerId :  handlerList) {
             File outputFile = new File( this.toOutputFileName(docHelper, chainId, handlerId ) );
-            log.info( "size {}:{}", outputFile.getName(), outputFile.length() );
+            log.info( "size {}:{}" , outputFile.getName(), outputFile.length() );
+        }
+        for ( String pdfUaHandlerId : Arrays.asList( ID_PDF_FOP_PDF_UA, ID_PDF_OPENPDF_PDF_UA, ID_PDF_PDFBOX_PDF_UA ) ) {
+            File outputFile = new File( this.toOutputFileName( docHelper, chainId, pdfUaHandlerId ) );
+            this.inspectPdfUaAccessibility( pdfUaHandlerId, outputFile );
+        }
+    }
+
+    private void inspectPdfUaAccessibility( String handlerId, File pdfFile ) throws IOException {
+        try ( PDDocument document = Loader.loadPDF( pdfFile ) ) {
+            PDDocumentCatalog catalog = document.getDocumentCatalog();
+            boolean isMarked = catalog.getMarkInfo() != null && catalog.getMarkInfo().isMarked();
+            PDStructureTreeRoot structureTreeRoot = catalog.getStructureTreeRoot();
+            String language = catalog.getLanguage();
+            PDViewerPreferences viewerPrefs = catalog.getViewerPreferences();
+            boolean displayDocTitle = viewerPrefs != null && viewerPrefs.displayDocTitle();
+
+            String xmpContent = "";
+            PDMetadata metadata = catalog.getMetadata();
+            if ( metadata != null ) {
+                try ( InputStream is = metadata.exportXMPMetadata() ) {
+                    xmpContent = new String( StreamIO.readBytes( is ), StandardCharsets.UTF_8 );
+                }
+            }
+            boolean hasPdfUaXmp = xmpContent.contains( "pdfuaid:part" );
+
+            List<String> fontSummary = new ArrayList<>();
+            for ( PDPage page : document.getPages() ) {
+                if ( page.getResources() != null ) {
+                    for ( org.apache.pdfbox.cos.COSName fontKey : page.getResources().getFontNames() ) {
+                        PDFont font = page.getResources().getFont( fontKey );
+                        if ( font != null ) {
+                            fontSummary.add( font.getName() + "(embedded=" + font.isEmbedded() + ")" );
+                        }
+                    }
+                }
+            }
+
+            List<String> rootStructTypes = new ArrayList<>();
+            if ( structureTreeRoot != null ) {
+                for ( Object kid : structureTreeRoot.getKids() ) {
+                    if ( kid instanceof PDStructureElement ) {
+                        PDStructureElement elem = (PDStructureElement) kid;
+                        rootStructTypes.add( elem.getStructureType() + "(children=" + elem.getKids().size() + ")" );
+                    } else if ( kid instanceof COSBase ) {
+                        rootStructTypes.add( kid.toString() );
+                    }
+                }
+            }
+
+            String text = new PDFTextStripper().getText( document );
+            log.info(
+                    "PDF/UA inspection [{}] -> size={} bytes, pdfVersion={}, pages={}, marked={}, lang={}, displayDocTitle={}, pdfUaXmp={}, structTree={}, rootStruct={}, fonts={}",
+                    handlerId, pdfFile.length(), document.getVersion(), document.getNumberOfPages(),
+                    isMarked, language, displayDocTitle, hasPdfUaXmp,
+                    structureTreeRoot != null, rootStructTypes, fontSummary
+            );
+
+            Assertions.assertTrue( isMarked, handlerId + " must have MarkInfo.Marked=true" );
+            Assertions.assertNotNull( structureTreeRoot, handlerId + " must have StructureTreeRoot" );
+            Assertions.assertNotNull( structureTreeRoot.getK(), handlerId + " must have StructureTreeRoot /K" );
+            Assertions.assertEquals( "en", language, handlerId + " must have catalog /Lang=en" );
+            Assertions.assertTrue( displayDocTitle, handlerId + " must have ViewerPreferences DisplayDocTitle=true" );
+            Assertions.assertTrue( hasPdfUaXmp, handlerId + " must include pdfuaid:part in XMP metadata" );
+            Assertions.assertTrue( text.contains( "Luthien" ), handlerId + " text must contain Luthien" );
+            Assertions.assertTrue( text.contains( "Thorin" ), handlerId + " text must contain Thorin" );
         }
     }
 
@@ -114,7 +200,7 @@ class DocHelperTest {
             docHelper.getDocProcessConfig().fullProcess(chainId, context, handlerId, baos);
 
             File outputFile = new File( "target/", String.format( "%s-watermark-%s.%s", chainId, watermarkMode, DocConfig.TYPE_PDF ) );
-            log.info( "delete file? : {} ({})", outputFile.delete(), outputFile );
+            log.info( "delete file? : {} ({})" , outputFile.delete(), outputFile );
 
             if ( ATT_WATERMARK_MODE_CUSTOM.equalsIgnoreCase( watermarkMode ) ) {
                 FileIO.writeBytes( addTextWatermark( baos.toByteArray(), "watermark" ), outputFile );

@@ -27,7 +27,7 @@
         <docHandler id="asciidoc-fm" info="adoc" type="org.fugerit.java.doc.freemarker.asciidoc.FreeMarkerAsciidocTypeHandlerUTF8" />
         <!-- Type handler generating xls:fo style sheet -->
         <docHandler id="fo-fop" info="fo" type="org.fugerit.java.doc.mod.fop.FreeMarkerFopTypeHandlerUTF8" />
-        <!-- Type handler generating pdf -->
+        <!-- Type handler generating pdf with FOP -->
         <docHandler id="pdf-fop-plain" info="pdf" type="org.fugerit.java.doc.mod.fop.PdfFopTypeHandler"/>
         <docHandler id="pdf-fop-config" info="pdf" type="org.fugerit.java.doc.mod.fop.PdfFopTypeHandler">
             <docHandlerCustomConfig charset="UTF-8" fop-config-mode="classloader" fop-config-classloader-path="venus-sample-pdf-fop-accessibility/fop-config.xml" fop-suppress-events="1"/>
@@ -43,6 +43,25 @@
         <docHandler id="pdf-fop-pdf-ua-no-font-embedding" info="pdf" type="org.fugerit.java.doc.mod.fop.PdfFopTypeHandler">
             <docHandlerCustomConfig charset="UTF-8" fop-suppress-events="1" pdf-ua-mode="PDF/UA-1"
                                     fop-config-mode="classloader" fop-config-classloader-path="venus-sample-pdf-fop-accessibility/fop-config-pdf-ua-no-font-embedding.xml" />
+        </docHandler>
+        <!-- Type handler generating pdf with OpenPDF -->
+        <docHandler id="pdf-openpdf-plain" info="pdf" type="org.fugerit.java.doc.mod.openpdf.ext.PdfTypeHandler">
+            <docHandlerCustomConfig charset="UTF-8">
+                <font name="TitilliumWeb" path="font/TitilliumWeb-Regular.ttf"/>
+            </docHandlerCustomConfig>
+        </docHandler>
+        <docHandler id="pdf-openpdf-pdf-ua" info="pdf" type="org.fugerit.java.doc.mod.openpdf.ext.PdfTypeHandler">
+            <docHandlerCustomConfig charset="UTF-8" activatePdfUA1="true">
+                <font name="TitilliumWeb" path="font/TitilliumWeb-Regular.ttf"/>
+                <font name="helvetica" path="font/TitilliumWeb-Regular.ttf"/>
+            </docHandlerCustomConfig>
+        </docHandler>
+        <!-- Type handler generating pdf with PDFBox -->
+        <docHandler id="pdf-pdfbox-plain" info="pdf" type="org.fugerit.java.doc.mod.pdfbox.PdfBoxTypeHandler">
+            <docHandlerCustomConfig charset="UTF-8"/>
+        </docHandler>
+        <docHandler id="pdf-pdfbox-pdf-ua" info="pdf" type="org.fugerit.java.doc.mod.pdfbox.PdfBoxTypeHandler">
+            <docHandlerCustomConfig charset="UTF-8" pdfuaEnabled="true"/>
         </docHandler>
     </docHandlerConfig>
 

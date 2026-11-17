@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) guide aligned with upstream fj-doc standards
+- PDF/UA-1 comparison with fj-doc-mod-openpdf-ext and fj-doc-mod-pdfbox
 
 ### Changed
 
